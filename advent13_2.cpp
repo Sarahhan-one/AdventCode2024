@@ -2,41 +2,53 @@
 #include <vector>
 #include <utility>
 #include <iostream>
-#include <cmath>
+#include <cassert>
 
 using namespace std;
 
-pair<long long, long long> solver (int& ax, int& ay, int& bx, int& by, long long& x, long long& y) {
-    long long diff = 10000000000000;
-    x += diff; y += diff;
-    long long i = (y * bx - x * by) / (ay * bx - ax * by);
-    long long j = (y * ax - x * ay) / (by * ax - bx * ay);
-    cout << i << endl;
-    if ((i*ax + j*bx == x) && (i*ay + j*by == y)) {
-        return make_pair(i, j);
-    }
-    return {-1, -1};
-}
 
 int main() {
-
     long long ans = 0;
-    for (string line; getline(cin, line);) {
+    string line;
+    while (cin.peek() != EOF) {
         int ax, ay, bx, by;
-        long long x, y;
+        int px, py;
+        getline(cin, line);
         sscanf(line.c_str(), "Button A: X+%d, Y+%d", &ax, &ay);
         getline(cin, line);
         sscanf(line.c_str(), "Button B: X+%d, Y+%d", &bx, &by);
         getline(cin, line);
-        sscanf(line.c_str(), "Prize: X=%d, Y=%d", &x, &y);
+        sscanf(line.c_str(), "Prize: X=%d, Y=%d", &px, &py);
         
-        auto temp = solver(ax, ay, bx, by, x, y); 
-        if (temp.first >= 0 && temp.second >= 0) {
-            ans += temp.first * 3 + temp.second;
+        long long x = px + 10000000000000LL;
+        long long y = py + 10000000000000LL;
+
+        // i * ax + j*bx = x 
+        // i = (x - j*bx) / ax
+        // i*ay + j*by = y
+        // ((x - j*bx) / ax)*ay + j*by = y 
+        // (x - j*bx)*ay + j*by*ax = y*ax
+        // x*ay - j*bx*ay + j*by*ax = y*ax
+        // j* (by*ax - bx*ay) = y*ax - x*ay
+
+        // j = (A X p) / (A X B);
+        // i = (B X p) / (B X A);
+        
+
+        long long i, j;
+        j = (y*ax - x*ay) / (by*ax - bx*ay);
+        i = (y*bx - x*by) / (ay*bx - ax*by);
+
+        
+        if (i * ax + j * bx == x) {
+            if (i * ay + j * by == y) {
+                ans += i * 3 + j;
+            }
         }
+        
         getline(cin, line);
     }
 
-    cout << ans << endl;
+    printf("%lld", ans);
 
 }
